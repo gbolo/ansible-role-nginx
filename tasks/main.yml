@@ -2,3 +2,5 @@
 
 - include: repo.yml
 - include: install.yml
+- include: config.yml
+- include: service.yml

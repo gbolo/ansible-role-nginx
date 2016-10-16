@@ -1,0 +1,9 @@
+---
+
+- name: configure nginx service
+  service:
+    name: "{{ nginx_service_name }}"
+    state: "{{ nginx_service_state }}"
+    enabled: "{{ nginx_service_enabled }}"
+  tags:
+    - "nginx_service_task"

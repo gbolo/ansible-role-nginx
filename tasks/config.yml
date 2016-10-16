@@ -1,0 +1,22 @@
+---
+
+# push config files
+- name: push nginx.conf
+  template:
+    src: "{{ nginx_conf_template }}"
+    dest: "/etc/nginx/nginx.conf"
+    mode: 0440
+    owner: "root"
+    group: "root"
+  notify: restart nginx
+
+# push additional files
+- name: push nginx dhparam
+  copy:
+    content: "{{ nginx_ssl_dhparam_content }}"
+    dest: "{{ nginx_ssl_dhparam }}"
+    mode: 0440
+    owner: "root"
+    group: "root"
+  notify: restart sgw
+  when: nginx_hardening_enabled

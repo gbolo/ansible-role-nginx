@@ -3,15 +3,20 @@
 
 # OS RELATED -------------------------------------------------------------------
 
-nginx_user: nginx
-nginx_group: nginx
-nginx_pkg_name: nginx
-nginx_pkg_state: present
+nginx_user: "nginx"
+nginx_group: "nginx"
+nginx_pkg_name: "nginx"
+nginx_pkg_state: "present"
 nginx_repo_enabled: true
+
+nginx_service_name: "nginx"
+nginx_service_enabled: true
+nginx_service_state: "started"
 
 # MAIN CONFIGURATION -----------------------------------------------------------
 
 # nginx.conf
+nginx_conf_template: "nginx.conf.j2"
 nginx_pidfile: "/run/nginx.pid"
 nginx_error_log: "/var/log/nginx/error.log warn"
 
@@ -42,3 +47,36 @@ nginx_ssl_dhparam: "/etc/nginx/ssl/dhparam.pem"
 nginx_ssl_dhparam_content: "!!ENCRYPT THIS WITH VAULT!!"
 
 # conf.d
+nginx_confd:
+  "01_default.conf":
+    listen: "80 default_server"
+    server_name: "example.com"
+    root: "/var/www/example.com"
+    index: "index.php index.html index.htm"
+    error_page: ""
+    access_log: ""
+    error_log: ""
+    extra_parameters: |
+      location ~ \.php$ {
+          fastcgi_split_path_info ^(.+\.php)(/.+)$;
+          fastcgi_pass unix:/var/run/php5-fpm.sock;
+          fastcgi_index index.php;
+          fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+          include fastcgi_params;
+      }
+  "02_proxy.conf":
+    listen: "81"
+    server_name: "example2.com"
+    root: "/var/www/example.com"
+    index: "index.php index.html index.htm"
+    error_page: ""
+    access_log: ""
+    error_log: ""
+    extra_parameters: |
+      location ~ \.php$ {
+        proxy_pass 	            http://some-host.tld;
+        proxy_set_header        Host            $host;
+	      proxy_set_header        X-Real-IP       $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_connect_timeout   10s;
+      }
