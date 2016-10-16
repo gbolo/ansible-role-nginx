@@ -1,0 +1,48 @@
+# {{ ansible_managed }}
+
+user              {{ nginx_user }};
+error_log         {{ nginx_error_log }};
+pid               {{ nginx_pidfile }};
+worker_processes  {{ nginx_worker_processes }};
+
+include           /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections  {{ nginx_worker_connections }};
+    multi_accept        {{ nginx_multi_accept }};
+}
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log          /var/log/nginx/access.log  main;
+
+    sendfile            {{ nginx_sendfile }};
+    tcp_nopush          {{ nginx_tcp_nopush }};
+    tcp_nodelay         {{ nginx_tcp_nodelay }};
+
+    keepalive_timeout   {{ nginx_keepalive_timeout }};
+    keepalive_requests  {{ nginx_keepalive_requests }};
+
+    types_hash_max_size {{ nginx_types_hash_max_size }};
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    server_names_hash_bucket_size {{ nginx_server_names_hash_bucket_size }};
+    client_max_body_size {{ nginx_client_max_body_size }};
+
+{% if nginx_proxy_cache_path %}
+    proxy_cache_path    {{ nginx_proxy_cache_path }};
+{% endif %}
+
+{% if nginx_extra_http_options %}
+    {{ nginx_extra_http_options }}
+{% endif %}
+
+    include             /etc/nginx/conf.d/*.conf;
+
+
+}
