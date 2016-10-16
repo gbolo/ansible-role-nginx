@@ -1,6 +1,8 @@
 Nginx - Ansible Role
 =========
 
+[![Build Status](https://travis-ci.org/gbolo/ansible-role-nginx.svg?branch=master)](https://travis-ci.org/gbolo/ansible-role-nginx)
+
 This role will fully configure and install [Docker](http://nginx.org/) on RHEL/CentOS
 
 Requirements
