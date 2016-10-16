@@ -1,0 +1,17 @@
+---
+# OS RELATED -------------------------------------------------------------------
+
+nginx_user: nginx
+nginx_group: nginx
+nginx_pkg_name: nginx
+nginx_pkg_state: present
+nginx_repo_enabled: true
+
+
+# MAIN CONFIGURATION -----------------------------------------------------------
+
+# nginx.conf
+
+
+
+# conf.d

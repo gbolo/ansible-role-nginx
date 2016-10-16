@@ -1,0 +1,7 @@
+---
+
+- name: install nginx
+  yum:
+    name: "{{ nginx_pkg_name }}"
+    state: "{{ nginx_pkg_state }}"
+    disable_gpg_check: false
