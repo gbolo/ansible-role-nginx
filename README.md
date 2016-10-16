@@ -164,6 +164,11 @@ Install nginx with php fpm backend (php-fpm is not managed by this role)
           }
 ```
 
+TODO List
+----------------
+- add full support for https vhosts
+- add support for stream blocks
+
 Author and License
 -------
 `nginx` role written by:
