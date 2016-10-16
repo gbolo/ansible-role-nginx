@@ -13,7 +13,6 @@
 # push additional files
 - name: create dhparam directory
   file:
-    content: "{{ nginx_ssl_dhparam_content }}"
     path: "{{ nginx_ssl_dhparam | dirname }}"
     state: "directory"
     mode: 0750
@@ -42,3 +41,30 @@
     group: "root"
   with_dict: "{{ nginx_confd }}"
   notify: restart nginx
+
+# http basic auth deploy
+- name: create htpasswd directories
+  file:
+    path: "{{ item.path | dirname }}"
+    state: "directory"
+    mode: 0750
+    owner: "root"
+    group: "root"
+  with_items: "{{ nginx_htpasswd }}"
+  no_log: true
+  when: nginx_htpasswd_enabled
+
+- name: creat htpasswd files
+  htpasswd:
+    name: "{{ item.1.name }}"
+    password: "{{ item.1.password }}"
+    path: "{{ item.0.path }}"
+    crypt_scheme: "apr_md5_crypt"
+    owner: "root"
+    group: "root"
+    mode: 0440
+  with_subelements:
+    - "{{ nginx_htpasswd }}"
+    - "users"
+  when: nginx_htpasswd_enabled
+  no_log: true

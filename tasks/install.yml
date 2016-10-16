@@ -5,3 +5,12 @@
     name: "{{ nginx_pkg_name }}"
     state: "{{ nginx_pkg_state }}"
     disable_gpg_check: false
+
+- name: install htpasswd required packages
+  yum:
+    name: "{{ item }}"
+    state: "latest"
+    disable_gpg_check: false
+  with_items:
+    - "{{ nginx_htpasswd_pkg_names }}"
+  when: nginx_htpasswd_enabled
