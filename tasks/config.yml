@@ -11,6 +11,17 @@
   notify: restart nginx
 
 # push additional files
+- name: create dhparam directory
+  file:
+    content: "{{ nginx_ssl_dhparam_content }}"
+    path: "{{ nginx_ssl_dhparam | dirname }}"
+    state: "directory"
+    mode: 0750
+    owner: "root"
+    group: "root"
+  notify: restart nginx
+  when: nginx_hardening_enabled
+
 - name: push nginx dhparam
   copy:
     content: "{{ nginx_ssl_dhparam_content }}"
@@ -18,5 +29,16 @@
     mode: 0440
     owner: "root"
     group: "root"
-  notify: restart sgw
+  notify: restart nginx
   when: nginx_hardening_enabled
+
+# push conf.d files
+- name: push additional configs to conf.d
+  template:
+    src: "vhost.conf.j2"
+    dest: "/etc/nginx/conf.d/{{ item.key }}"
+    mode: 0440
+    owner: "root"
+    group: "root"
+  with_dict: "{{ nginx_confd }}"
+  notify: restart nginx
