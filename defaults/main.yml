@@ -31,6 +31,14 @@ nginx_proxy_cache_path: ""
 nginx_extra_http_options: ""
 
 # hardening
-
+nginx_hardening_enabled: true
+nginx_server_tokens: "off"
+nginx_ssl_protocols: "TLSv1.1 TLSv1.2"
+nginx_ssl_ciphers: "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH:!aNULL:!MD5"
+nginx_ssl_session_cache: "shared:SSL:30m"
+nginx_ssl_session_timeout: "5m"
+nginx_header_hsts: "Strict-Transport-Security max-age=15768000"
+nginx_ssl_dhparam: "/etc/nginx/ssl/dhparam.pem"
+nginx_ssl_dhparam_content: "!!ENCRYPT THIS WITH VAULT!!"
 
 # conf.d
