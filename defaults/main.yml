@@ -100,3 +100,11 @@ nginx_htpasswd:
     users:
       - name: "user3"
         password: "!!ENCRYPT THIS WITH VAULT!!"
+
+# push tls certs
+nginx_tlscerts_enabled: false
+nginx_tlscerts:
+  - cert_path: "/etc/nginx/tls/example.com/chain.pem"
+    cert_content: "PUBLIC CERT CONTENT"
+    key_path: "/etc/nginx/tls/example.com/key.pem"
+    key_content: "!!ENCRYPT THIS WITH VAULT!!"

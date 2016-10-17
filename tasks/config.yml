@@ -54,7 +54,7 @@
   no_log: true
   when: nginx_htpasswd_enabled
 
-- name: creat htpasswd files
+- name: create htpasswd files
   htpasswd:
     name: "{{ item.1.name }}"
     password: "{{ item.1.password }}"
@@ -67,4 +67,57 @@
     - "{{ nginx_htpasswd }}"
     - "users"
   when: nginx_htpasswd_enabled
+  no_log: true
+
+# push tls certs
+- name: create tls cert directories
+  file:
+    path: "{{ item.cert_path | dirname }}"
+    state: "directory"
+    mode: 0500
+    owner: "root"
+    group: "root"
+  notify: restart nginx
+  with_items:
+    - "{{ nginx_tlscerts }}"
+  when: nginx_tlscerts_enabled
+  no_log: true
+
+- name: create tls key directories
+  file:
+    path: "{{ item.key_path | dirname }}"
+    state: "directory"
+    mode: 0500
+    owner: "root"
+    group: "root"
+  notify: restart nginx
+  with_items:
+    - "{{ nginx_tlscerts }}"
+  when: nginx_tlscerts_enabled
+  no_log: true
+
+- name: push tls certs
+  copy:
+    content: "{{ item.cert_content }}"
+    dest: "{{ item.cert_path }}"
+    mode: 0400
+    owner: "root"
+    group: "root"
+  notify: restart nginx
+  with_items:
+    - "{{ nginx_tlscerts }}"
+  when: nginx_tlscerts_enabled
+  no_log: true
+
+- name: push tls keys
+  copy:
+    content: "{{ item.key_content }}"
+    dest: "{{ item.key_path }}"
+    mode: 0400
+    owner: "root"
+    group: "root"
+  notify: restart nginx
+  with_items:
+    - "{{ nginx_tlscerts }}"
+  when: nginx_tlscerts_enabled
   no_log: true
