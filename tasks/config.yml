@@ -48,8 +48,8 @@
     path: "{{ item.path | dirname }}"
     state: "directory"
     mode: 0750
-    owner: "root"
-    group: "root"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
   with_items: "{{ nginx_htpasswd }}"
   no_log: true
   when: nginx_htpasswd_enabled
@@ -60,8 +60,8 @@
     password: "{{ item.1.password }}"
     path: "{{ item.0.path }}"
     crypt_scheme: "apr_md5_crypt"
-    owner: "root"
-    group: "root"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
     mode: 0440
   with_subelements:
     - "{{ nginx_htpasswd }}"
