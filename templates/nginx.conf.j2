@@ -43,6 +43,7 @@ http {
 {% endif %}
 
 {% if nginx_hardening_enabled %}
+    server_tokens                 off;
     ssl_prefer_server_ciphers     on;
     ssl_protocols                 {{ nginx_ssl_protocols }};
     ssl_ciphers                   '{{ nginx_ssl_ciphers }}';
