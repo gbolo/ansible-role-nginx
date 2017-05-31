@@ -15,7 +15,7 @@ nginx_service_state: "started"
 
 # MAIN CONFIGURATION -----------------------------------------------------------
 
-# nginx.conf
+## Main nginx.conf Defaults
 nginx_conf_template: "nginx.conf.j2"
 nginx_pidfile: "/run/nginx.pid"
 nginx_error_log: "/var/log/nginx/error.log warn"
@@ -35,7 +35,7 @@ nginx_server_names_hash_bucket_size: "64"
 nginx_proxy_cache_path: ""
 nginx_extra_http_options: ""
 
-# hardening
+## Hardening Defaults
 nginx_hardening_enabled: true
 nginx_server_tokens: "off"
 nginx_ssl_protocols: "TLSv1.1 TLSv1.2"
@@ -44,9 +44,19 @@ nginx_ssl_session_cache: "shared:SSL:30m"
 nginx_ssl_session_timeout: "5m"
 nginx_header_hsts: "Strict-Transport-Security max-age=15768000"
 nginx_ssl_dhparam: "/etc/nginx/tls/dhparam.pem"
-nginx_ssl_dhparam_content: "!!ENCRYPT THIS WITH VAULT!!"
+## This  dhparam should be changed and encrypted
+## Generate your own like: openssl dhparam -out /tmp/dhparam.pem 2048
+nginx_ssl_dhparam_content: |
+  -----BEGIN DH PARAMETERS-----
+  MIIBCAKCAQEAigl7AgLYI901SNBxXnnVhHJJILKGAQl9KlG8fR55tD4yKxAn8uBF
+  MTTBTu2mduFNxv3trWalPS1NqxsHau0MI9Q/iUftzbKlGEZ2ur+gRDz6pRYOPv8a
+  3VNzQeSoMrj3jYgnL4m/P6YOy0oOVNhA8j5B/S1gCqch+ttv+x+0ae9L06Z9c74M
+  nVTPyaqMJbCQGJKPy0s/yjlNxso24HiJRImr7JS5aecVFM9jr0gu8SMexObz3AOT
+  3u1omQGGDspZECeh3pv3IJSIc0wqv+OX3eF8JIBhr4ika1jSIoFX4ouAVZnysthW
+  t3rx7WpztLDSSUgXOFrNxdRSqyEG0rUKYwIBAg==
+  -----END DH PARAMETERS-----
 
-# conf.d
+## conf.d server entries
 ## !!WARNING!! due to this issue: https://github.com/ansible/ansible/issues/17159
 ## do not use null or booleans to exclude option because they will be turned into strings
 nginx_confd:
@@ -83,28 +93,31 @@ nginx_confd:
         proxy_connect_timeout   10s;
       }
 
-# http basic auth
+## Enable basic auth support
 nginx_htpasswd_enabled: true
 nginx_htpasswd_pkg_names:
   - "httpd-tools"
   - "python-passlib"
 
-nginx_htpasswd:
-  - path: "/etc/nginx/htpasswd/htpasswd1"
-    users:
-      - name: "user1"
-        password: "!!ENCRYPT THIS WITH VAULT!!"
-      - name: "user2"
-        password: "!!ENCRYPT THIS WITH VAULT!!"
-  - path: "/etc/nginx/htpasswd/htpasswd2"
-    users:
-      - name: "user3"
-        password: "!!ENCRYPT THIS WITH VAULT!!"
+## Example on creating htpasswd files
+# nginx_htpasswd:
+#   - path: "/etc/nginx/htpasswd/htpasswd1"
+#     users:
+#       - name: "user1"
+#         password: "!!ENCRYPT THIS WITH VAULT!!"
+#       - name: "user2"
+#         password: "!!ENCRYPT THIS WITH VAULT!!"
+#   - path: "/etc/nginx/htpasswd/htpasswd2"
+#     users:
+#       - name: "user3"
+#         password: "!!ENCRYPT THIS WITH VAULT!!"
 
-# push tls certs
+## Enable push of tls certs
 nginx_tlscerts_enabled: false
-nginx_tlscerts:
-  - cert_path: "/etc/nginx/tls/example.com/chain.pem"
-    cert_content: "PUBLIC CERT CONTENT"
-    key_path: "/etc/nginx/tls/example.com/key.pem"
-    key_content: "!!ENCRYPT THIS WITH VAULT!!"
+
+## Example on how to push tls certs
+# nginx_tlscerts:
+#   - cert_path: "/etc/nginx/tls/example.com/chain.pem"
+#     cert_content: "PUBLIC CERT CONTENT"
+#     key_path: "/etc/nginx/tls/example.com/key.pem"
+#     key_content: "!!ENCRYPT THIS WITH VAULT!!"
