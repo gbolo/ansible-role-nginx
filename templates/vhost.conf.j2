@@ -7,6 +7,14 @@ server {
     server_name {{ item.value.server_name }};
 {% endif %}
 
+{% if item.value.ssl_certificate is defined %}
+    ssl_certificate {{ item.value.ssl_certificate }};
+{% endif %}
+
+{% if item.value.ssl_certificate_key is defined %}
+    ssl_certificate_key {{ item.value.ssl_certificate_key }};
+{% endif %}
+
 {% if item.value.root is defined %}
     root {{ item.value.root }};
 {% endif %}
