@@ -1,5 +1,9 @@
 # {{ ansible_managed }}
 
+{% if item.value.extra_blocks is defined %}
+{{ item.value.extra_blocks }}
+{% endif %}
+
 server {
     listen {{ item.value.listen | default('80') }};
 
