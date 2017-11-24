@@ -39,8 +39,29 @@
     mode: 0440
     owner: "root"
     group: "root"
+  register: pushed_nginx_configs
   with_dict: "{{ nginx_confd }}"
   notify: restart nginx
+
+# flatten and map the results into simple list
+# unchanged files have attribute dest, changed have attribute path
+- set_fact:
+    managed_nginx_config_files: "{{ pushed_nginx_configs.results|selectattr('dest', 'string')|map(attribute='dest')|list + pushed_nginx_configs.results|selectattr('path', 'string')|map(attribute='path')|select|list }}"
+  when: pushed_nginx_configs
+
+- name: get list of existing configs
+  shell: "ls -1 /etc/nginx/conf.d/*"
+  register: all_nginx_config_files
+  changed_when: false
+
+- name: deleting outdated configs in conf.d
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items: "{{ all_nginx_config_files.stdout_lines }}"
+  when: item not in managed_nginx_config_files
+  notify:
+    - restart nginx
 
 # http basic auth deploy
 - name: create htpasswd directories
